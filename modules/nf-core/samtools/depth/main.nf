@@ -9,6 +9,7 @@ process SAMTOOLS_DEPTH {
 
     input:
     tuple val(meta), path(bam)
+    tuple val(meta2), path(bedfile)
 
     output:
     tuple val(meta), path("*.tsv"), emit: tsv
@@ -20,11 +21,13 @@ process SAMTOOLS_DEPTH {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def bedfile_flat = bedfile ? "-b ${bedfile}" : ""
     """
     samtools \\
         depth \\
         --threads ${task.cpus-1} \\
         $args \\
+        ${bedfile_flag} \\
         -o ${prefix}.tsv \\
         $bam
 
